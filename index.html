@@ -1,46 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>MD5 Hasher</title>
+  <meta charset="UTF-8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
-    pre { background: #f4f4f4; padding: 1rem; border: 1px solid #ccc; }
-  </style>
 </head>
 <body>
-  <h2>MD5 Hash Generator (from URL)</h2>
-  <pre id="result">Processing...</pre>
+<script>
+  // Lấy query từ URL
+  const params = new URLSearchParams(window.location.search);
+  const pass = params.get('pass');
+  const v1 = params.get('v1') || '';
+  const v2 = params.get('v2') || '';
 
-  <script>
-    // Lấy query từ URL
-    const params = new URLSearchParams(window.location.search);
-    const pass = params.get('pass');
-    const v1 = params.get('v1');
-    const v2 = params.get('v2');
+  // Tạo thẻ <pre> để xuất JSON thuần
+  const pre = document.createElement('pre');
+  document.body.appendChild(pre);
 
-    const resultEl = document.getElementById('result');
+  if (!pass) {
+    pre.textContent = JSON.stringify({
+      error: "Missing 'pass' parameter. Use: ?pass=yourpass&v1=value1&v2=value2"
+    }, null, 2);
+  } else {
+    const hashed = CryptoJS.MD5(pass).toString();
 
-    if (!pass || !v1 || !v2) {
-      resultEl.textContent = 'Missing parameters. Use: ?pass=yourpass&v1=value1&v2=value2';
-    } else {
-      // Hash pass bằng MD5
-      const hashed = CryptoJS.MD5(pass).toString();
+    const response = {
+      params: {
+        pass: '[hidden]',
+        v1: v1,
+        v2: v2
+      },
+      result: hashed,
+      status: 'success'
+    };
 
-      // Hiển thị kết quả JSON
-      const response = {
-        params: {
-          pass: '[hidden]',
-          v1: v1,
-          v2: v2
-        },
-        result: hashed,
-        status: 'success'
-      };
-
-      resultEl.textContent = JSON.stringify(response, null, 2);
-    }
-  </script>
+    pre.textContent = JSON.stringify(response, null, 2);
+  }
+</script>
 </body>
 </html>
